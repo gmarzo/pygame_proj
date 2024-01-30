@@ -20,6 +20,15 @@ def handle_animation(player_sprite):
     global ySpeed
     new_img = idle
     keys = pygame.key.get_pressed()
+    # if keys[pygame.K_a]:
+    #   if player.state["facing-right"]:
+    #     player.image = pygame.transform.flip(player.image, True, False)
+    #     player.state["facing-right"] = False
+    
+    # elif keys[pygame.K_d]:
+    #   if not player.state["facing-right"]:
+    #     player.image = pygame.transform.flip(player.image, False, False)
+    #     player.state["facing-right"] = True
     if player_sprite.state["grounded"]:
       if keys[pygame.K_d] or keys[pygame.K_a]:
         if player_sprite.state["anim"] == "idle":
@@ -30,12 +39,11 @@ def handle_animation(player_sprite):
                 run_iter = 0
             new_img = running_images[run_iter]
             run_iter += 1
-      
       else:
           run_iter = 0
           player_sprite.state["anim"] = "idle"
           new_img = idle
-    elif player_sprite.state["grounded"] == False:
+    elif not player_sprite.state["grounded"]:
         if ySpeed < 0:
             player_sprite.state["anim"] = "fall"
             new_img = idle
@@ -63,6 +71,9 @@ def update_physics():
         ySpeed = -20
         player.state["grounded"] = False
         pass
+    elif not keys[pygame.K_SPACE]:
+        if ySpeed < 0:
+          ySpeed //= 2
     
     player.rect.x += xSpeed
     player.rect.y += ySpeed
@@ -71,6 +82,7 @@ def update_physics():
       if pygame.sprite.collide_rect(player, ground):
           ySpeed = 0
           player.state["grounded"] = True
+          player.state["anim"]="idle"
           while pygame.sprite.collide_rect(player, ground):
               player.rect.y -= 1
     
@@ -78,7 +90,7 @@ def update_physics():
     
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((640, 360))
 clock = pygame.time.Clock()
 running = True
 
@@ -93,11 +105,11 @@ run_iter = 0
 
 player = Sprite((255, 255, 255), 100, 100)
 player.image = idle
-player.rect.x, player.rect.y = 100, 100
-player.state = {"anim":"idle","grounded":True}
+player.rect.x, player.rect.y = 100, 235
+player.state = {"anim":"idle","grounded":True, "facing-right":True}
 
-ground = Sprite((0, 255, 0), 50, 1280)
-ground.rect.x, ground.rect.y = 0, 670
+ground = Sprite((0, 255, 0), 25, 640)
+ground.rect.x, ground.rect.y = 0, 335
 
 
 sprite_group = pygame.sprite.Group()
