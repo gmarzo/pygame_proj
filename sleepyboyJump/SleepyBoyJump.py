@@ -51,7 +51,7 @@ def handle_animation(player_sprite):
             player_sprite.state["anim"] = "rise"
             new_img = idle
     
-    player_sprite.image = new_img
+    player_sprite.image = new_img if player_sprite.state["facing-right"] else pygame.transform.flip(new_img, True, False)
 
 
 def update_physics():
@@ -61,8 +61,10 @@ def update_physics():
     global ground
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
+        player.state["facing-right"] = True
         xSpeed = 5
     elif keys[pygame.K_a]:
+        player.state["facing-right"] = False
         xSpeed = -5
     else:
         xSpeed = 0
@@ -121,7 +123,6 @@ while running:
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
-            print("quit recieved")
             running = False
 
     keys_pressed = pygame.key.get_pressed()
