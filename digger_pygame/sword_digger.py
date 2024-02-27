@@ -1,9 +1,13 @@
 import os
 import pygame
+import random
 
 class Sprite(pygame.sprite.Sprite): 
     def __init__(self, height, width, images): 
         super().__init__() 
+
+        self.height = height
+        self.width = width
     
         self.rect = pygame.Rect((0, 0), (height, width))
 
@@ -47,13 +51,30 @@ class Sword(Sprite):
         super().__init__(height, width, images)
         self.rect.x, self.rect.y = 800, 0
 
+        self.swords = {"common": images[0:3],
+                       "rare": images[3:5],
+                       "ultra_rare": images[5:7]}
+
     def new_sword(self):
         # This function can be changed to pick a random instead of cycling
-        self.img_index = (self.img_index + 1) % len(self.images)
-        self.image = self.images[self.img_index]
+        gacha_val = random.random()
+        print(gacha_val)
+        new_sword_img = None
+        if gacha_val < 0.6:
+          new_sword_img = self.swords["common"][random.randint(0, len(self.swords["common"])-1)]
+        elif gacha_val < 0.9:
+          new_sword_img = self.swords["rare"][random.randint(0,len(self.swords["rare"])-1)]
+        else:
+          new_sword_img = self.swords["ultra_rare"][random.randint(0,len(self.swords["ultra_rare"])-1)]
+
+        # self.img_index = (self.img_index + 1) % len(self.images)
+        scale_img = pygame.transform.scale(new_sword_img, (self.height, self.width))
+        self.image = scale_img
+
+    
 
 
-pygame.init()    
+pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
@@ -62,7 +83,7 @@ running_images = [pygame.image.load("../sleepyboyJump/sleepyboy/"+x).convert() f
 sword_images = [pygame.image.load("./swords/"+x).convert() for x in os.listdir("./swords")]
 
 digger = Digger(400, 300, running_images)
-sword = Sword(200, 400, sword_images)
+sword = Sword(200, 200, sword_images)
 
 
 
