@@ -6,14 +6,14 @@ screen = pygame.display.set_mode((1080, 920))
 clock = pygame.time.Clock()
 running = True
 
-player_img = pygame.image.load("rip.png")
+player_img = pygame.transform.scale(pygame.image.load("rip.png"), (100, 66))
 player_hitbox = player_img.get_rect()
 p_x = 400
 p_y = 50
 p_xspeed = 0
 p_yspeed = 0
 p_isGrounded = False
-p_stats = {"MAX_GROUND_SPEED": 15, "MAX_FALL_SPEED": 12, "GRAVITY": 2, "MIDAIR_JUMPS": 1}
+p_stats = {"MAX_GROUND_SPEED": 10, "MAX_FALL_SPEED": 12, "GRAVITY": 2, "MIDAIR_JUMPS": 1}
 p_midairJumps = p_stats["MIDAIR_JUMPS"]
 
 
@@ -21,8 +21,8 @@ p_midairJumps = p_stats["MIDAIR_JUMPS"]
 stage = pygame.Rect(240, 600, 600, 150)
 
 stage_ground = (241, 600, 839, 600)
-stage_left_wall = (240, 601, 240, 750)
-stage_right_wall = (840, 601, 840, 750)
+stage_left_wall = (240, 610, 240, 740)
+stage_right_wall = (840, 610, 840, 740)
 
 # Name given to the death zones that kill the player
 blast_zone_top = 0
@@ -49,13 +49,19 @@ while running:
   elif keys_pressed[pygame.K_a]:
     p_xspeed = max(p_xspeed - 1, -p_stats["MAX_GROUND_SPEED"])
   else:
-    p_xspeed *= 0.5
+    p_xspeed *= 0.8
 
   # Calculate vertical player movement per frame
   if keys_pressed[pygame.K_w] and p_isGrounded:
     p_yspeed = -30
   elif not p_isGrounded:
-    p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
+    if keys_pressed[pygame.K_w]:
+      p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
+    elif not keys_pressed[pygame.K_w]:
+      if p_yspeed < -1:
+        p_yspeed *= 0.7
+      else:
+        p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
     # Use a midair jump
     if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
       p_yspeed = -30
@@ -103,7 +109,7 @@ while running:
   print(player_hitbox.left)
   screen.fill((45, 45, 45))
   pygame.draw.rect(screen, (89, 45, 5), stage)
-  pygame.draw.rect(screen, (255, 0, 0), test)
+  # pygame.draw.rect(screen, (255, 0, 0), test)
   screen.blit(player_img, (p_x, p_y))
   # pygame.draw.rect(screen, (255, 0, 0), player_hitbox)
   clock.tick(60)
