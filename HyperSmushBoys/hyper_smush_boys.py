@@ -13,16 +13,18 @@ p_y = 50
 p_xspeed = 0
 p_yspeed = 0
 p_isGrounded = False
+p_isFastFalling = False
 p_stats = {"MAX_GROUND_SPEED": 10, "MAX_FALL_SPEED": 12, "GRAVITY": 2, "MIDAIR_JUMPS": 1}
 p_midairJumps = p_stats["MIDAIR_JUMPS"]
 
-
+pipe_fall = pygame.mixer.Sound("pipe.mp3")
+pygame.mixer.music.load("copyright_infringement.mp3")
 
 stage = pygame.Rect(240, 600, 600, 150)
 
 stage_ground = (241, 600, 839, 600)
-stage_left_wall = (240, 610, 240, 740)
-stage_right_wall = (840, 610, 840, 740)
+stage_left_wall = (240, 600, 240, 750)
+stage_right_wall = (840, 600, 840, 750)
 
 # Name given to the death zones that kill the player
 blast_zone_top = 0
@@ -30,7 +32,12 @@ blast_zone_bot = 920
 blast_zone_right = 1080
 blast_zone_left = 0
 
-test = pygame.Rect(240, 601, 10, 149)
+left_test = pygame.Rect(240, 600, 10, 140)
+right_test = pygame.Rect(830, 600, 10, 140)
+top_test = pygame.Rect(241, 600, 598, 10)
+
+pygame.mixer.music.play()
+
 while running:
 
   for e in pygame.event.get():
@@ -54,7 +61,7 @@ while running:
   # Calculate vertical player movement per frame
   if keys_pressed[pygame.K_w] and p_isGrounded:
     p_yspeed = -30
-  elif not p_isGrounded:
+  elif not p_isGrounded and not p_isFastFalling:
     if keys_pressed[pygame.K_w]:
       p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
     elif not keys_pressed[pygame.K_w]:
@@ -66,8 +73,20 @@ while running:
     if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
       p_yspeed = -30
       p_midairJumps -= 1
+      p_isFastFalling = False
+
+    # Fast fall by pressing down in mid-air
+    if keys_pressed[pygame.K_s] and not p_isFastFalling and p_yspeed > 0:
+      p_yspeed = p_stats["MAX_FALL_SPEED"] * 2
+      p_isFastFalling = True  
+  elif not p_isGrounded and p_isFastFalling:
+    if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
+      p_yspeed = -30
+      p_midairJumps -= 1
+      p_isFastFalling = False
   elif p_isGrounded:
-    p_yspeed = 0
+      p_yspeed = 0
+      p_isFastFalling = False
   
   
   p_x += p_xspeed
@@ -75,6 +94,18 @@ while running:
 
   player_hitbox.x = p_x
   player_hitbox.y = p_y
+
+  
+  # Check for ground collision
+  if player_hitbox.clipline(stage_ground):
+    p_isGrounded = True
+    p_isFastFalling = False
+    p_midairJumps = p_stats["MIDAIR_JUMPS"]
+    while player_hitbox.bottom > stage_ground[1] + 1:
+      p_y -= 1
+      player_hitbox.y = p_y
+  else:
+    p_isGrounded = False
 
   # Check against walls
   if player_hitbox.clipline(stage_left_wall) and not p_isGrounded:
@@ -88,30 +119,29 @@ while running:
       p_x += 1
       player_hitbox.x = p_x
 
-  # Check for ground collision
-  if player_hitbox.clipline(stage_ground):
-    p_isGrounded = True
-    p_midairJumps = p_stats["MIDAIR_JUMPS"]
-    while player_hitbox.bottom > stage_ground[1] + 1:
-      p_y -= 1
-      player_hitbox.y = p_y
-  else:
-    p_isGrounded = False
-
-  
 
   # "Respawn" player on death
   if player_hitbox.top > blast_zone_bot or player_hitbox.left > blast_zone_right or player_hitbox.bottom < blast_zone_top or player_hitbox.right < blast_zone_left:
     p_x = 400
-    p_y = 50
+    p_y = 300
     p_midairJumps = p_stats["MIDAIR_JUMPS"]
+    p_isFastFalling = False
+    pygame.mixer.Sound.play(pipe_fall)
 
-  print(player_hitbox.left)
+  # print(p_yspeed, p_isGrounded, p_isFastFalling)
   screen.fill((45, 45, 45))
   pygame.draw.rect(screen, (89, 45, 5), stage)
-  # pygame.draw.rect(screen, (255, 0, 0), test)
+
+  # Debug rects to approximate walls and floor
+  pygame.draw.rect(screen, (255, 0, 0), left_test)
+  pygame.draw.rect(screen, (255, 0, 0), right_test)
+  pygame.draw.rect(screen, (0, 0, 255), top_test)
+
   screen.blit(player_img, (p_x, p_y))
-  # pygame.draw.rect(screen, (255, 0, 0), player_hitbox)
+
+  # Debug check for when grounded
+  # if p_isGrounded:
+  #   pygame.draw.rect(screen, (255, 0, 0), player_hitbox)
   clock.tick(60)
 
   pygame.display.update()
