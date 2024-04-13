@@ -18,7 +18,7 @@ p_stats = {"MAX_GROUND_SPEED": 10, "MAX_FALL_SPEED": 12, "GRAVITY": 2, "MIDAIR_J
 p_midairJumps = p_stats["MIDAIR_JUMPS"]
 
 pipe_fall = pygame.mixer.Sound("pipe.mp3")
-pygame.mixer.music.load("copyright_infringement.mp3")
+#pygame.mixer.music.load("copyright_infringement.mp3")
 
 stage = pygame.Rect(240, 600, 600, 150)
 
@@ -36,12 +36,13 @@ left_test = pygame.Rect(240, 600, 10, 140)
 right_test = pygame.Rect(830, 600, 10, 140)
 top_test = pygame.Rect(241, 600, 598, 10)
 
-pygame.mixer.music.play()
+#pygame.mixer.music.play()
 
 while running:
 
   for e in pygame.event.get():
     if e.type == pygame.QUIT:
+      print("QUIT)")
       running = False
     
     if e.type == pygame.KEYDOWN:

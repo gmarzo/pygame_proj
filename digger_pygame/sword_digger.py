@@ -86,7 +86,6 @@ class InventorySlot(Sprite):
         self.hidden_img = pygame.Surface((self.height, self.width))
         self.hidden_img.fill((0,0,0))
 
-        print(self.hidden_img)
         self.image = self.hidden_img
     
     def reveal(self):
@@ -152,8 +151,8 @@ while running:
 
     screen.fill((115,115,115))
 
-    if inventory_open:
-        dt = 0
+    # if inventory_open:
+    #     dt = 0
 
     all_sprites.draw(screen)
     all_sprites.update(dt)
