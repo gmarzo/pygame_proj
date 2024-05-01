@@ -100,7 +100,7 @@ score = 0
 
 font = pygame.font.SysFont("timesnewroman", 30)
 text = font.render(f"{score}", True, (0,0,0))
-text.set_alpha(50)
+#text.set_alpha(50)
 
 text_rect = text.get_rect()
 text_rect.center = (100, 100)
@@ -146,7 +146,7 @@ while running:
 
     screen.fill("purple")
     text = font.render(f"{score}", True, (0,0,0))
-    text.set_alpha(5)
+    text.set_alpha(score%255)
     sprite_group.update()
     sprite_group.draw(screen)
     screen.blit(text, text_rect)
