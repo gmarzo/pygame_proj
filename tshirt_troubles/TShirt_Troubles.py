@@ -60,6 +60,8 @@ while running_main:
   if game_mode == "store":
     move_player(key_pressed, player, OBSTACLES)
     pygame.draw.rect(screen, (0, 0, 0), player.rect)
+
+    # if key_pressed[]
     
     for object in OBSTACLES:
       pygame.draw.rect(screen, (255, 0, 0), object)
