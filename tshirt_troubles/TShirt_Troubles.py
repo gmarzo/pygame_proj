@@ -13,7 +13,8 @@ WALK_SPEED = 5
 player = Player(100, 100, 50, 50)
 
 counter = pygame.Rect(500, 300, 580, 100)
-OBSTACLES = [counter]
+cutting = pygame.Rect(900, 400, 80, 80)
+OBSTACLES = [counter, cutting]
 
 CUTTING_GAME = Minigame()
 
@@ -22,8 +23,10 @@ def move_player(keys, player, obstacles):
   
   if keys[pygame.K_a]:
     player.x -= WALK_SPEED
+    player.facing = "left"
   if keys[pygame.K_d]:
     player.x += WALK_SPEED
+    player.facing = "right"
   
   player.rect.x = player.x
 
@@ -33,8 +36,10 @@ def move_player(keys, player, obstacles):
 
   if keys[pygame.K_w]:
     player.y -= WALK_SPEED
+    player.facing = "up"
   if keys[pygame.K_s]:
     player.y += WALK_SPEED
+    player.facing = "down"
   
   player.rect.y = player.y
 
@@ -59,12 +64,20 @@ while running_main:
   key_pressed = pygame.key.get_pressed()
   if game_mode == "store":
     move_player(key_pressed, player, OBSTACLES)
+    if key_pressed[pygame.K_SPACE]:
+      check = player.interact()
+      pygame.draw.rect(screen, (0,255,0), check)
+      if check.colliderect(cutting):
+        game_mode = "cut"
+
     pygame.draw.rect(screen, (0, 0, 0), player.rect)
+    
 
     # if key_pressed[]
     
     for object in OBSTACLES:
       pygame.draw.rect(screen, (255, 0, 0), object)
+    pygame.draw.rect(screen, (0, 0, 255), cutting)
   
   elif game_mode == "cut":
     pygame.draw.rect(screen, CUTTING_GAME.background, CUTTING_GAME.rect)
