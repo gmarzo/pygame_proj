@@ -134,9 +134,9 @@ while running:
   pygame.draw.rect(screen, (89, 45, 5), stage)
 
   # Debug rects to approximate walls and floor
-  pygame.draw.rect(screen, (255, 0, 0), left_test)
-  pygame.draw.rect(screen, (255, 0, 0), right_test)
-  pygame.draw.rect(screen, (0, 0, 255), top_test)
+  # pygame.draw.rect(screen, (255, 0, 0), left_test)
+  # pygame.draw.rect(screen, (255, 0, 0), right_test)
+  # pygame.draw.rect(screen, (0, 0, 255), top_test)
 
   screen.blit(player_img, (p_x, p_y))
 
