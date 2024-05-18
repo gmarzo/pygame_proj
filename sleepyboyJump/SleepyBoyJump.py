@@ -94,7 +94,16 @@ def update_physics():
 pygame.init()
 screen = pygame.display.set_mode((640, 360))
 clock = pygame.time.Clock()
+clock.tick(60)
 running = True
+score = 0
+
+font = pygame.font.SysFont("timesnewroman", 30)
+text = font.render(f"{score}", True, (0,0,0))
+#text.set_alpha(50)
+
+text_rect = text.get_rect()
+text_rect.center = (100, 100)
 
 xSpeed = 0
 ySpeed = 0
@@ -128,14 +137,19 @@ while running:
     keys_pressed = pygame.key.get_pressed()
     if keys_pressed[pygame.K_ESCAPE]:
         pygame.quit()
+    if keys_pressed[pygame.K_SPACE]:
+        score += 1
     
     update_physics()
     handle_animation(player)
 
 
     screen.fill("purple")
+    text = font.render(f"{score}", True, (0,0,0))
+    text.set_alpha(score%255)
     sprite_group.update()
     sprite_group.draw(screen)
+    screen.blit(text, text_rect)
     pygame.display.flip()
     clock.tick(60)
 
