@@ -14,6 +14,7 @@ p_xspeed = 0
 p_yspeed = 0
 p_isGrounded = False
 p_isFastFalling = False
+p_isAttacking = False
 p_stats = {"MAX_GROUND_SPEED": 10, "MAX_FALL_SPEED": 12, "GRAVITY": 2, "MIDAIR_JUMPS": 1}
 p_midairJumps = p_stats["MIDAIR_JUMPS"]
 
@@ -51,43 +52,45 @@ while running:
 
   keys_pressed = pygame.key.get_pressed()
 
+  # Only allow change in movement if not attacking
+  if not p_isAttacking:
   # Calculate horizontal player movement per frame
-  if keys_pressed[pygame.K_d]:
-    p_xspeed = min(p_xspeed + 1, p_stats["MAX_GROUND_SPEED"])
-  elif keys_pressed[pygame.K_a]:
-    p_xspeed = max(p_xspeed - 1, -p_stats["MAX_GROUND_SPEED"])
-  else:
-    p_xspeed *= 0.8
+    if keys_pressed[pygame.K_d]:
+      p_xspeed = min(p_xspeed + 1, p_stats["MAX_GROUND_SPEED"])
+    elif keys_pressed[pygame.K_a]:
+      p_xspeed = max(p_xspeed - 1, -p_stats["MAX_GROUND_SPEED"])
+    else:
+      p_xspeed *= 0.8
 
-  # Calculate vertical player movement per frame
-  if keys_pressed[pygame.K_w] and p_isGrounded:
-    p_yspeed = -30
-  elif not p_isGrounded and not p_isFastFalling:
-    if keys_pressed[pygame.K_w]:
-      p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
-    elif not keys_pressed[pygame.K_w]:
-      if p_yspeed < -1:
-        p_yspeed *= 0.7
-      else:
+    # Calculate vertical player movement per frame
+    if keys_pressed[pygame.K_w] and p_isGrounded:
+      p_yspeed = -30
+    elif not p_isGrounded and not p_isFastFalling:
+      if keys_pressed[pygame.K_w]:
         p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
-    # Use a midair jump
-    if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
-      p_yspeed = -30
-      p_midairJumps -= 1
-      p_isFastFalling = False
+      elif not keys_pressed[pygame.K_w]:
+        if p_yspeed < -1:
+          p_yspeed *= 0.7
+        else:
+          p_yspeed = min(p_yspeed + p_stats["GRAVITY"], p_stats["MAX_FALL_SPEED"])
+      # Use a midair jump
+      if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
+        p_yspeed = -30
+        p_midairJumps -= 1
+        p_isFastFalling = False
 
-    # Fast fall by pressing down in mid-air
-    if keys_pressed[pygame.K_s] and not p_isFastFalling and p_yspeed > 0:
-      p_yspeed = p_stats["MAX_FALL_SPEED"] * 2
-      p_isFastFalling = True  
-  elif not p_isGrounded and p_isFastFalling:
-    if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
-      p_yspeed = -30
-      p_midairJumps -= 1
-      p_isFastFalling = False
-  elif p_isGrounded:
-      p_yspeed = 0
-      p_isFastFalling = False
+      # Fast fall by pressing down in mid-air
+      if keys_pressed[pygame.K_s] and not p_isFastFalling and p_yspeed > 0:
+        p_yspeed = p_stats["MAX_FALL_SPEED"] * 2
+        p_isFastFalling = True  
+    elif not p_isGrounded and p_isFastFalling:
+      if keys_pressed[pygame.K_w] and p_yspeed > 0 and p_midairJumps > 0:
+        p_yspeed = -30
+        p_midairJumps -= 1
+        p_isFastFalling = False
+    elif p_isGrounded:
+        p_yspeed = 0
+        p_isFastFalling = False 
   
   
   p_x += p_xspeed

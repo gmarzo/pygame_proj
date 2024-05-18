@@ -10,11 +10,15 @@ class Hitbox():
     self.active = False
 
 class Attack():
-  def __init__(self, hitboxes=[], active_frames=0, images=[]):
+  def __init__(self, hitboxes={}, images={}):
     self.hitboxes = hitboxes
-    self.active_frames = active_frames
     self.images = images
+    self.current_frame = 0
     self.dt = 0
+
+  def update(self, dt):
+    self.dt += dt
+    
 
   
 
