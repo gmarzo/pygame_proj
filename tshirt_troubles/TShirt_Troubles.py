@@ -17,6 +17,11 @@ cutting = pygame.Rect(900, 400, 80, 80)
 OBSTACLES = [counter, cutting]
 
 CUTTING_GAME = Minigame()
+model1 = pygame.Rect(250, 120, 75, 75)
+model2 = pygame.Rect(250, 230, 75, 75)
+model3 = pygame.Rect(250, 340, 75, 75)
+board = pygame.Rect(480, 120, 300, 400)
+
 
 def move_player(keys, player, obstacles):
   last_position = (player.x, player.y)
@@ -81,4 +86,8 @@ while running_main:
   
   elif game_mode == "cut":
     pygame.draw.rect(screen, CUTTING_GAME.background, CUTTING_GAME.rect)
+    pygame.draw.rect(screen, (0, 0, 170), model1)
+    pygame.draw.rect(screen, (0, 0, 170), model2)
+    pygame.draw.rect(screen, (0, 0, 170), model3)
+    pygame.draw.rect(screen, (100, 100, 100), board)
   pygame.display.update()
